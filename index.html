@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI Dashboard</title>
+<link rel="manifest" href="manifest.json">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body { font-family: Arial; background:#111; color:#fff; }
+input,button { padding:10px; margin:5px; }
+table { width:100%; margin-top:10px; }
+td { border-bottom:1px solid #333; padding:5px; }
+</style>
+</head>
+
+<body>
+
+<h2>AI Dashboard</h2>
+
+<input id="text" placeholder="Test text">
+<button onclick="send()">Send</button>
+
+<table id="table"></table>
+
+<script>
+const SUPABASE_URL = "https://xszgijqnktliwltaaukj.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzemdpanFua3RsaXdsdGFhdWtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MTE5NDIsImV4cCI6MjA4OTk4Nzk0Mn0.MuRRF-cQ7T9R7SZZ-Yy6jo2bxEVWqKLa_ETJdnbbqZw";
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function send(){
+    const text = document.getElementById("text").value;
+
+    await fetch("https://YOUR-VERCEL-URL/api/translate", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({text})
+    });
+}
+
+async function load(){
+    const { data } = await supabase.from("translations").select("*");
+    const table = document.getElementById("table");
+    table.innerHTML = "";
+
+    data.forEach(row=>{
+        table.innerHTML += `<tr><td>${row.original}</td><td>${row.translated}</td></tr>`;
+    });
+}
+
+load();
+setInterval(load,3000);
+</script>
+
+</body>
+</html>
