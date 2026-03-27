@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>AI Dashboard</title>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#0ff">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
@@ -33,7 +35,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function send(){
     const text = document.getElementById("text").value;
 
-    await fetch("https://YOUR-VERCEL-URL/api/translate", {
+    await fetch("/api/translate", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({text})
