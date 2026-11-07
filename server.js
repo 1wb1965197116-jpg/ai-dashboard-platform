@@ -13,8 +13,9 @@ app.use(express.static("./")); // Serve static files
 app.post("/api/translate", async (req, res) => {
     const { text } = req.body;
     // Replace with your real translation logic or AI call
-    const translated = text.split("").reverse().join(""); // Example: reverse string
-    res.json({ original: text, translated });
+    if (typeof text !== "string" || !text.trim()) return res.status(400).json({ error: "Enter text" });
+    const translated = text.split("").reverse().join(""); // Demo only, not translation.
+    res.json({ original: text, translated, demo: true });
 });
 
 app.listen(port, () => {

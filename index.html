@@ -20,6 +20,7 @@ td { border-bottom:1px solid #333; padding:5px; }
 <body>
 
 <h2>AI Dashboard</h2>
+<p>The server endpoint is a demonstration that reverses text, not a translation service.</p>
 
 <input id="text" placeholder="Test text">
 <button onclick="send()">Send</button>
@@ -30,7 +31,7 @@ td { border-bottom:1px solid #333; padding:5px; }
 const SUPABASE_URL = "https://xszgijqnktliwltaaukj.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzemdpanFua3RsaXdsdGFhdWtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MTE5NDIsImV4cCI6MjA4OTk4Nzk0Mn0.MuRRF-cQ7T9R7SZZ-Yy6jo2bxEVWqKLa_ETJdnbbqZw";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function send(){
     const text = document.getElementById("text").value;
@@ -43,13 +44,19 @@ async function send(){
 }
 
 async function load(){
-    const { data } = await supabase.from("translations").select("*");
+    const { data, error } = await db.from("translations").select("*");
+    if (error) { console.error("Could not load translations", error.message); return; }
     const table = document.getElementById("table");
-    table.innerHTML = "";
-
-    data.forEach(row=>{
-        table.innerHTML += `<tr><td>${row.original}</td><td>${row.translated}</td></tr>`;
-    });
+    table.replaceChildren();
+    for (const row of data || []) {
+        const tr = document.createElement("tr");
+        for (const value of [row.original, row.translated]) {
+            const td = document.createElement("td");
+            td.textContent = value ?? "";
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
 }
 
 load();
